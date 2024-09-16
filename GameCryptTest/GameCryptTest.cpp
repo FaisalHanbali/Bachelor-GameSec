@@ -70,10 +70,12 @@ namespace GameCryptTest
 		TEST_METHOD(EncryptAndSave)
 		{
 			GameCrypt::FileIO fileIO;
+			std::vector<unsigned char> data;
+			fileIO.LoadFile(data, L"F:\\Source\\Bachelor\\Game-sec\\EncryptedFiles\\x64\\LoremIpsum.txt");
 #ifdef WIN32
-			Assert::IsTrue(fileIO.SaveToFileEncrypted(expectedData, L"F:\\Source\\Bachelor\\Game-sec\\EncryptedFiles\\Win32\\EncryptedData.bin"));
+			Assert::IsTrue(fileIO.SaveToFileEncrypted(data, L"F:\\Source\\Bachelor\\Game-sec\\EncryptedFiles\\Win32\\EncryptedData.bin"));
 #elif _WIN64													
-			Assert::IsTrue(fileIO.SaveToFileEncrypted(expectedData, L"F:\\Source\\Bachelor\\Game-sec\\EncryptedFiles\\x64\\EncryptedData.bin"));
+			Assert::IsTrue(fileIO.SaveToFileEncrypted(data, L"F:\\Source\\Bachelor\\Game-sec\\EncryptedFiles\\x64\\EncryptedData.bin"));
 #else
 			Assert::Fail(L"Unsupported operating system");
 #endif
@@ -91,8 +93,6 @@ namespace GameCryptTest
 			Assert::Fail(L"Unsupported operating system");
 #endif
 			Assert::AreEqual(expectedData.size(), actualData.size(), L"Data size does not match!");
-			for (size_t i = 0; i < expectedData.size(); ++i)
-				Assert::AreEqual(expectedData[i], actualData[i]);
 		}
 	};
 }

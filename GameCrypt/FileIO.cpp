@@ -72,7 +72,7 @@ namespace GameCrypt
 		}
 		Encryption_Header header;
 		header.original_data_size = inVec.size();
-		header.data_is_compressed = true;
+		header.data_is_compressed = false;
 		std::vector<unsigned char> EncryptedData;
 		std::vector<unsigned char> Data = inVec;
 		std::vector<unsigned char> outIV;
