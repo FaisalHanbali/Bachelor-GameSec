@@ -33,6 +33,12 @@
     <ClInclude Include="defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DataHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mutex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameCrypt.cpp">
@@ -48,6 +54,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Compression.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mutex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

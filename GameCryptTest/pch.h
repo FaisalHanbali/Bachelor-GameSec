@@ -3,11 +3,10 @@
 // This also affects IntelliSense performance, including code completion and many code browsing features.
 // However, files listed here are ALL re-compiled if any one of them is updated between builds.
 // Do not add files here that you will be updating frequently as this negates the performance advantage.
-#pragma once
-// add headers that you want to pre-compile here
-#include "framework.h"
-#include "defines.h"
 
-// These libraries must be linked if anything from this project is to be used
-//#pragma comment(lib, "cryptlib.lib")
-//#pragma comment(lib, "GameCrypt.lib")
+#ifndef PCH_H
+#define PCH_H
+
+// add headers that you want to pre-compile here
+
+#endif //PCH_H

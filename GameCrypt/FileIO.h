@@ -7,7 +7,11 @@ namespace GameCrypt
 	class FileIO
 	{
 	public:
-		bool SaveToFile(CharV const& inVec, std::wstring const& fileName);
-		bool ReadFile(CharV& outVec, std::wstring const& fileName);
+		
+		bool SaveFile(std::vector<unsigned char> const& inData, std::wstring const& fileName);
+		bool LoadFile(std::vector<unsigned char>& outData, std::wstring const& fileName);
+
+		bool SaveToFileEncrypted(std::vector<unsigned char> const& inData, std::wstring const& fileName);
+		bool LoadEncryptedFile(std::vector<unsigned char>& outData, std::wstring const& fileName);
 	};
 }
