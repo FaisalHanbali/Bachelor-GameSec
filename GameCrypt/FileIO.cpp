@@ -72,7 +72,7 @@ namespace GameCrypt
 		}
 		Encryption_Header header;
 		header.original_data_size = inVec.size();
-		header.data_is_compressed = false;
+		header.data_is_compressed = false; // Do not use compression. Maybe make a global for this or for specific file formats
 		std::vector<unsigned char> EncryptedData;
 		std::vector<unsigned char> Data = inVec;
 		std::vector<unsigned char> outIV;
@@ -123,35 +123,24 @@ namespace GameCrypt
 
 		return SaveFile(EncryptedData, fileName);
 	}
-	bool FileIO::LoadEncryptedFile(std::vector<unsigned char>& outVec, const std::wstring& fileName)
+	bool FileIO::LoadEncryptedFile(std::vector<unsigned char>& outVec, std::wstring const& fileName)
 	{
-		std::vector<unsigned char> encryptedData;
-		if (!LoadFile(encryptedData, fileName))
-		{
-			return false; // Error: failed to load the file
-		}
-		if (encryptedData.size() < sizeof(Encryption_Header))
-		{
-			return false;
-		}
+		std::vector<unsigned char> DecryptedData;
+		LoadFile(DecryptedData, fileName);
 		Encryption_Header header;
-		memcpy_s(&header, sizeof(header), &encryptedData[0], sizeof(header));
 
-		size_t dataSize = encryptedData.size() - sizeof(header);
-		if (dataSize == 0)
+		if (DecryptedData.size() < sizeof(header))
 		{
-			return false; // Error: no data to decrypt
+			return false; // Error: file too small
 		}
-		std::vector<unsigned char> dataWithoutHeader(dataSize);
-		memcpy_s(&dataWithoutHeader[0], dataWithoutHeader.size(), &encryptedData[sizeof(header)], dataWithoutHeader.size());
+
+		memcpy_s(&header, sizeof(header), &DecryptedData.at(0), sizeof(header));
+
+		std::vector<unsigned char> DataWithoutHeader(DecryptedData.size() - sizeof(header));
+		memcpy_s(&DataWithoutHeader[0], DataWithoutHeader.size(), &DecryptedData.at(sizeof(header)), DataWithoutHeader.size());
 
 		Encryption encryption;
-		outVec = encryption.Decrypt(dataWithoutHeader, std::initializer_list(header.IV, header.IV + CryptoPP::AES::BLOCKSIZE));
-
-		if (outVec.empty())
-		{
-			return false; // Error: decryption failed
-		}
+		outVec = encryption.Decrypt(DataWithoutHeader, std::initializer_list<unsigned char>(header.IV, header.IV + CryptoPP::AES::BLOCKSIZE));
 
 		if (header.data_is_compressed)
 		{
@@ -161,15 +150,9 @@ namespace GameCrypt
 			{
 				outVec.swap(decompressed);
 			}
-			else
-			{
-				return false; // Error: decompression failed
-			}
 		}
-
-		return true; // Success
+		return outVec.empty() ? false : true;
 	}
-
 
 
 } // namespace GameCrypt
