@@ -168,7 +168,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Compression.h" />
-    <ClInclude Include="DataHandler.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="Encryption.h" />
     <ClInclude Include="FileIO.h" />
@@ -178,7 +177,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Compression.cpp" />
-    <ClCompile Include="DataHandler.cpp" />
     <ClCompile Include="Encryption.cpp" />
     <ClCompile Include="FileIO.cpp" />
     <ClCompile Include="GameCrypt.cpp" />
