@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "FileIO.h"
-#include "DataHandler.h"
 #include "Mutex.h"
 #include "Encryption.h"
 #include <iostream>
@@ -87,6 +86,7 @@ namespace GameCrypt
 				if (!CompressedData.empty())
 				{
 					// Swap data 
+					Data.clear();
 					Data.swap(CompressedData);
 					header.compressed_data_size = Data.size();
 				}
@@ -125,22 +125,26 @@ namespace GameCrypt
 	}
 	bool FileIO::LoadEncryptedFile(std::vector<unsigned char>& outVec, std::wstring const& fileName)
 	{
-		std::vector<unsigned char> DecryptedData;
-		LoadFile(DecryptedData, fileName);
-		Encryption_Header header;
-
-		if (DecryptedData.size() < sizeof(header))
+		std::ifstream file(fileName, std::ios::binary);
+		if (!file.is_open())
 		{
-			return false; // Error: file too small
+			return false;
 		}
+		size_t offset = 0;
+		file.seekg(offset, std::ios::beg);
+		std::vector<unsigned char> headerDataVec(sizeof(Encryption_Header));
+		file.read(reinterpret_cast<char*>(headerDataVec.data()), sizeof(Encryption_Header));
+		offset += sizeof(Encryption_Header);
 
-		memcpy_s(&header, sizeof(header), &DecryptedData.at(0), sizeof(header));
+		Encryption_Header header;
+		memcpy_s(&header, sizeof(header), &headerDataVec.at(0), sizeof(header));
 
-		std::vector<unsigned char> DataWithoutHeader(DecryptedData.size() - sizeof(header));
-		memcpy_s(&DataWithoutHeader[0], DataWithoutHeader.size(), &DecryptedData.at(sizeof(header)), DataWithoutHeader.size());
+		file.seekg(offset, std::ios::beg);
+		std::vector<unsigned char> encryptedData(header.encrypted_data_size);
+		file.read(reinterpret_cast<char*>(encryptedData.data()), header.encrypted_data_size);
 
 		Encryption encryption;
-		outVec = encryption.Decrypt(DataWithoutHeader, std::initializer_list<unsigned char>(header.IV, header.IV + CryptoPP::AES::BLOCKSIZE));
+		outVec = encryption.Decrypt(encryptedData, std::initializer_list<unsigned char>(header.IV, header.IV + CryptoPP::AES::BLOCKSIZE));
 
 		if (header.data_is_compressed)
 		{
@@ -151,6 +155,7 @@ namespace GameCrypt
 				outVec.swap(decompressed);
 			}
 		}
+		file.close();
 		return outVec.empty() ? false : true;
 	}
 
