@@ -156,7 +156,7 @@ namespace GameCrypt
 			}
 		}
 		file.close();
-		return outVec.empty() ? false : true;
+		return !outVec.empty();
 	}
 
 
