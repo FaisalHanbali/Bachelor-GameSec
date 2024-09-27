@@ -78,28 +78,7 @@ namespace GameCrypt
 
 		{
 			Mutex mute;
-			if (header.data_is_compressed)
-			{
-				// Do compression
-				Compressor compressor;
-				std::vector<unsigned char> CompressedData = compressor.Compress(Data);
-				if (!CompressedData.empty())
-				{
-					// Swap data 
-					Data.clear();
-					Data.swap(CompressedData);
-					header.compressed_data_size = Data.size();
-				}
-				else
-				{
-					header.compressed_data_size = header.original_data_size;
-					header.data_is_compressed = false;
-				}
-			}
-			else
-			{
-				header.compressed_data_size = header.original_data_size;
-			}
+			header.compressed_data_size = header.original_data_size;
 			Encryption encryption;
 			EncryptedData = encryption.Encrypt(Data, outIV);
 			if (EncryptedData.empty())
@@ -145,16 +124,6 @@ namespace GameCrypt
 
 		Encryption encryption;
 		outVec = encryption.Decrypt(encryptedData, std::initializer_list<unsigned char>(header.IV, header.IV + CryptoPP::AES::BLOCKSIZE));
-
-		if (header.data_is_compressed)
-		{
-			Compressor compressor;
-			std::vector<unsigned char> decompressed = compressor.Decompress(outVec);
-			if (!decompressed.empty())
-			{
-				outVec.swap(decompressed);
-			}
-		}
 		file.close();
 		return !outVec.empty();
 	}
