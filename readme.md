@@ -4,4 +4,4 @@
 - In GameApplication, hardcode or create settings for the application to know where to pull the encrypted file from.
 - Compile and apply themida.
 
-Optionally, you can also input different text by using the GameCrypt load functions to read any file and then encrypt it.
+Optionally, you can also input different files by using the GameCrypt load functions to read any file and then encrypt it.
